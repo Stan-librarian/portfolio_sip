@@ -1,0 +1,3 @@
+<header>
+	<h1><a href="index.php">SIP en PHP</a></h1>
+</header>

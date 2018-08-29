@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+		<title>Protocole SIP2</title>
+		<style type="text/css">
+			body {
+				margin: 2em;
+				background-color: #F1E2BE;
+				font-family: arial;
+				}
+			h1 {
+				text-align: center;
+				text-shadow:1px 1px 2px gray;
+				border-width:1px;
+				border-style:dotted;
+				border-color:black;
+				}
+			table {
+				background-color: #FFFFFF;
+				border-radius: 1em;
+				padding: 0.5em;
+				}
+			tr.optionnel {
+				font-style: italic;
+				}
+		</style>
+	</head>
+	<body>
+		<h1>Protocole SIP2 (Standard Interchange Protocol Version 2.00)</h1>
+		
+		<p><a href="http://multimedia.3m.com/mws/mediawebserver?mwsId=SSSSSuH8gc7nZxtUm8_9m82UevUqe17zHvTSevTSeSSSSSS--&amp;fn=SIP2%20Protocol%20Definition.pdf">Source</a></p>
+		
+		<h2>Acronymes</h2>
+		<ul>
+			<li>SIP2 = Standard Interchange Protocol Version 2.00</li>
+			<li>ACS = Automated Circulation System = SIGB (ou plus précisement le module SIP du SIGB ?)</li>
+			<li>SC = 3M SelfCheck system or any library automation device dealing with patrons or library materials = Automate</li>
+		</ul>
+		
+		<a id="sommaire"></a><h2>Requêtes et réponses SIP2</h2>
+		
+		<table width="50%" border="0">
+			<tbody><tr><th colspan="2">Automate &#8594; SIGB</th><th colspan="2">SIGB &#8594; automate</th></tr>
+			<tr style="font-weight: bold;"><td>Code</td><td>Libellé</td><td>Code</td><td>Libellé</td></tr>
+			<tr><td>01</td><td>Block Patron</td><td></td><td></td></tr>
+			<tr><td>09</td><td><a href="#requete09">Checkin</a> (retour)</td><td>10</td><td><a href="#requete10">Checkin Response</a></td></tr>
+			<tr><td>11</td><td><a href="#requete11">Checkout</a> (prêt)</td><td>12</td><td><a href="#requete12">Checkout Response</a></td></tr>
+			<tr><td>15</td><td>Hold</td><td>16</td><td>Hold Response</td></tr>
+			<tr><td>17</td><td><a href="#requete17">Item Information</a></td><td>18</td><td><a href="#requete18">Item Information Response</a></td></tr>
+			<tr><td>19</td><td>Item Status Update</td><td>20</td><td>Item Status Update Response</td></tr>
+			<tr><td>23</td><td>Patron Status Request</td><td>24</td><td>Patron Status Response</td></tr>
+			<tr><td>25</td><td>Patron Enable</td><td>26</td><td>Patron Enable Response</td></tr>
+			<tr><td>29</td><td>Renew</td><td>30</td><td>Renew Response</td></tr>
+			<tr><td>35</td><td>End Patron Session</td><td>36</td><td>End Session Response</td></tr>
+			<tr><td>37</td><td>Fee Paid</td><td>38</td><td>Fee Paid Response</td></tr>
+			<tr><td>63</td><td><a href="#requete63">Patron Information</a></td><td>64</td><td><a href="#requete64">Patron Information Response</a></td></tr>
+			<tr><td>65</td><td>Renew All</td><td>66</td><td>Renew All Response</td></tr>
+			<tr><td>93</td><td>Login</td><td>94</td><td>Login Response</td></tr>
+			<tr><td></td><td></td><td>96</td><td>Request SC Resend</td></tr>
+			<tr><td>97</td><td>Request ACS Resend</td><td></td><td></td></tr>
+			<tr><td></td><td></td><td>98</td><td>ACS Status</td></tr>
+			<tr><td>99</td><td>SC Status</td><td></td><td></td></tr>
+		</tbody></table>
+		
+		<p><a href="#codes">Codes de champs</a></p>
+		
+		<h2><a id="requete09">Checkin (09)</a></h2>
+		
+		<p style="font-weight: bold;">This message is used by the SC to 
+request to check in an item, and also to cancel a Checkout request that 
+did not successfully complete. The ACS must respond to this command with
+ a Checkin Response message.</p>
+		
+		<p style="font-weight: bold;">09 &lt;no block&gt;&lt;transaction 
+date&gt;&lt;return date&gt;&lt;current location&gt;&lt;institution 
+id&gt;&lt;item identifier&gt;&lt;terminal password&gt;&lt;item 
+properties&gt;&lt;cancel&gt;</p>
+		
+		<table style="background-color: #FFFFFF; border-radius: 1em; padding: 0.5em;" width="95%" border="0">
+			<tbody><tr align="left"><th width="5%"></th><th width="10%">Field</th><th width="5%">ID</th><th width="65%">Format</th></tr>
+			<tr><td></td><td>no block</td><td></td><td>1-char, fixed-length required field: Y or N.</td></tr>
+			<tr><td></td><td>transaction date</td><td></td><td>18-char, fixed-length required field: YYYYMMDDZZZZHHMMSS. The date and time that the patron checked out the item at the SC unit.</td></tr>
+			<tr><td></td><td>return date</td><td></td><td>18-char, fixed-length required field: YYYYMMDDZZZZHHMMSS</td></tr>
+			<tr><td></td><td>current location</td><td>AP</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>institution id</td><td>AO</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>item identifier</td><td>AB</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>terminal password</td><td>AC</td><td>variable-length required field</td></tr>
+			<tr><td>2.00</td><td>item properties</td><td>CH</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>cancel</td><td>BI</td><td>1-char, optional field: Y or N</td></tr>
+		</tbody></table>
+		
+		<p style="font-weight: bold;">Exemple de requête 09 de la trieuse :</p>
+		
+		<p style="font-weight: bold;">09N20140520&nbsp;&nbsp;&nbsp;&nbsp;17552520140520&nbsp;&nbsp;&nbsp;&nbsp;175525APSM|AOSM|AB0700979|AC|&lt;CR&gt;</p>
+		
+		<table>
+			<tbody><tr><td width="50%">09</td><td width="50%">type de commande SIP : 09 (Checkin)</td></tr>
+			<tr><td>N</td><td>no block : non</td></tr>
+			<tr><td>20140520&nbsp;&nbsp;&nbsp;&nbsp;175525</td><td>date de la transaction : 20 mai 2014, 17 h 55 m 25 s</td></tr>
+			<tr><td>20140520&nbsp;&nbsp;&nbsp;&nbsp;175525</td><td>date de retour : 20 mai 2014, 17 h 55 m 25 s</td></tr>
+			<tr><td>APSM|</td><td>localisation de l'exemplaire : SM</td></tr>
+			<tr><td>AOSM|</td><td>localisation de transaction : SM</td></tr>
+			<tr><td>AB0700979|</td><td>code-barres document : 0700979</td></tr>
+			<tr><td>AC|</td><td>terminal password</td></tr>
+			<tr><td>&lt;CR&gt;</td><td>?</td></tr>
+		</tbody></table>
+		
+		<p><a href="#sommaire">sommaire</a></p>
+		
+		<h2><a id="requete10">Checkin Response (10)</a></h2>
+		
+		<p style="font-weight: bold;">This message must be sent by the ACS in response to a SC Checkin message.</p>
+		
+		<p style="font-weight: bold;">10 
+&lt;ok&gt;&lt;resensitize&gt;&lt;magnetic 
+media&gt;&lt;alert&gt;&lt;transaction date&gt;&lt;institution 
+id&gt;&lt;item identifier&gt;&lt;permanent location&gt;&lt;title 
+identifier&gt;&lt;sort bin&gt;&lt;patron identifier&gt;&lt;media 
+type&gt;&lt;item properties&gt;&lt;screen message&gt;&lt;print line&gt;</p>
+		
+		<table style="background-color: #FFFFFF; border-radius: 1em; padding: 0.5em;" width="70%" border="0">
+			<tbody><tr align="left"><th width="5%"></th><th width="15%">Field</th><th width="5%">ID</th><th width="45%">Format</th></tr>
+			<tr><td></td><td>ok</td><td></td><td>1-char, fixed-length required field: 0 or 1.</td></tr>
+			<tr><td></td><td>resensitize</td><td></td><td>1-char, fixed-length required field: Y or N.</td></tr>
+			<tr><td></td><td>magnetic media</td><td></td><td>1-char, fixed-length required field: Y or N or U.</td></tr>
+			<tr><td></td><td>alert</td><td></td><td>1-char, fixed-length required field: Y or N.</td></tr>
+			<tr><td></td><td>transaction date</td><td></td><td>18-char, fixed-length required field: YYYYMMDDZZZZHHMMSS.</td></tr>
+			<tr><td></td><td>institution id</td><td>AO</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>item identifier</td><td>AB</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>permanent location</td><td>AQ</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>title identifier</td><td>AJ</td><td>variable-length required field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>sort bin</td><td>CL</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>patron identifier</td><td>AA</td><td>variable-length optional field. ID of the patron who had the item checked out.</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>media type</td><td>CK</td><td>3-char, fixed-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>item properties</td><td>CH</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td></td><td>screen message</td><td>AF</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td></td><td>print line</td><td>AG</td><td>variable-length optional field</td></tr>
+		</tbody></table>
+		
+		<p>The OK, and Resensitize fields should be set according to the following rules:</p>
+		
+		<table style="background-color: #FFFFFF; border-radius: 1em; padding: 0.5em;" width="80%" border="0">
+			<tbody><tr><td rowspan="2" width="10%">OK</td><td>should be set to 1 if the ACS checked in the item.</td></tr>
+			<tr><td>should be set to 0 if the ACS did not check in the item.</td></tr>
+			<tr><td rowspan="2">Resensitize</td><td>should be set to Y if the SC should resensitize the article.</td></tr>
+			<tr><td>should be set to N if the SC should not resensitize the article (for example, a closed reserve book, or the checkin was refused)</td></tr>
+		</tbody></table>
+		
+		<p style="font-weight: bold;">Exemple de requête 10 de la trieuse :</p>
+		
+		<p style="font-weight: bold;">101YNN20140520&nbsp;&nbsp;&nbsp;&nbsp;175525AOSM|AB00000000700979|AQSM&nbsp;&nbsp;&nbsp;&nbsp;|AJLe
+ rÃ¨gne des fÃ©lons Texte imprimÃ© / Anne|CL1|AA0000000E207025|</p>	
+		
+		<table>
+			<tbody><tr><td width="50%">10</td><td width="50%">type de commande SIP : 10 (Checkin Response)</td></tr>
+			<tr><td>1</td><td>OK : oui (requête effectuée avec succès) (ici, retour enregistré) </td></tr>
+			<tr><td>Y</td><td>activation de l'antivol : oui</td></tr>
+			<tr><td>N</td><td>magnetic media : non</td></tr>
+			<tr><td>N</td><td>alert : non</td></tr>
+			<tr><td>20140520&nbsp;&nbsp;&nbsp;&nbsp;175525</td><td>date de la transaction : 20 mai 2014, 17 h 55 m 25 s</td></tr>
+			<tr><td>AOSM|</td><td>localisation de transaction : SM</td></tr>
+			<tr><td>AB00000000700979|</td><td>code-barres document : 00000000700979</td></tr>
+			<tr><td>AQSM&nbsp;&nbsp;&nbsp;&nbsp;</td><td>localisation propriétaire : SM</td></tr>
+			<tr><td>AJLe rÃ¨gne des fÃ©lons Texte imprimÃ© / Anne|</td><td>titre : Le rÃ¨gne des fÃ©lons Texte imprimÃ© / Anne</td></tr>
+			<tr><td>CL1|</td><td>bac de tri : 1</td></tr>
+			<tr><td>AA0000000E207025|</td><td>code-barres usager : 0000000E207025</td></tr>
+		</tbody></table>
+		
+		<p><a href="#sommaire">sommaire</a></p>
+		
+		<h2><a id="requete11">Checkout (11)</a></h2>
+		
+		<p style="font-weight: bold;">This message is used by the SC to 
+request to check out an item, and also to cancel a Checkin request that 
+did not successfully complete. The ACS must respond to this command with
+ a Checkout Response message.</p>
+		
+		<p style="font-weight: bold;">11 &lt;SC renewal policy&gt;&lt;no 
+block&gt;&lt;transaction date&gt;&lt;nb due date&gt;&lt;institution 
+id&gt;&lt;patron identifier&gt;&lt;item identifier&gt;&lt;terminal 
+password&gt;&lt;patron password&gt;&lt;item properties&gt;&lt;fee 
+acknowledged&gt;&lt;cancel&gt;</p>
+		
+		<table style="background-color: #FFFFFF; border-radius: 1em; padding: 0.5em;" width="90%" border="0">
+			<tbody><tr align="left"><th width="5%"></th><th width="10%">Field</th><th width="5%">ID</th><th width="70%">Format</th></tr>
+			<tr><td></td><td>SC renewal policy</td><td></td><td>1-char, fixed-length required field: Y or N.</td></tr>
+			<tr><td></td><td>no block</td><td></td><td>1-char, fixed-length required field: Y or N.</td></tr>
+			<tr><td></td><td>transaction date</td><td></td><td>18-char, fixed-length required field: YYYYMMDDZZZZHHMMSS. The date and time that the patron checked out the item at the SC unit.</td></tr>
+			<tr><td></td><td>nb due date</td><td></td><td>18-char, fixed-length required field: YYYYMMDDZZZZHHMMSS</td></tr>
+			<tr><td></td><td>institution id</td><td>AO</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>patron identifier</td><td>AA</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>item identifier</td><td>AB</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>terminal password</td><td>AC</td><td>variable-length required field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>item properties</td><td>CH</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>patron password</td><td>AD</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>fee acknowledged</td><td>BO</td><td>1-char, optional field: Y or N</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>cancel</td><td>BI</td><td>1-char, optional field: Y or N</td></tr>
+		</tbody></table>
+		
+		<p style="font-weight: bold;">Exemple de requête 11 envoyée par l'automate :</p>
+		
+		<p style="font-weight: bold;">11YN20140408&nbsp;&nbsp;&nbsp;&nbsp;105635&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AOSM|AAE221976|AB0697478|AC|CH|AD|BOY|BIN|AY6AZEBA0</p>
+		
+		<table>
+			<tbody><tr><td width="50%">11</td><td width="50%">type de commande SIP : 11 (Checkout)</td></tr>
+			<tr><td>Y</td><td>SC renewal policy : Y</td></tr>
+			<tr><td>N</td><td>no block : N</td></tr>
+			<tr><td>20140408&nbsp;&nbsp;&nbsp;&nbsp;105635</td><td>date de la transaction : 8 avril 2014, 10 h 56 m 35 s</td></tr>
+			<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>no block due date : vide</td></tr>
+			<tr><td>AOSM|</td><td>localisation de transaction : SM</td></tr>
+			<tr><td>AAE221976|</td><td>code-barres usager : E221976</td></tr>
+			<tr><td>AB0697478|</td><td>code-barres document : 0697478</td></tr>
+			<tr><td>AC|</td><td>terminal password</td></tr>
+			<tr><td>CH|</td><td>item properties</td></tr>
+			<tr><td>AD|</td><td>patron password</td></tr>
+			<tr><td>BOY|</td><td>fee acknowledged : Y</td></tr>
+			<tr><td>BIN|</td><td>cancel : N</td></tr>
+			<tr><td>AY6AZEBA0</td><td>sequence number = 6AZEBA0 (used only when error detection is enabled)</td></tr>
+		</tbody></table>
+		
+		<p><a href="#sommaire">sommaire</a></p>
+		
+		<h2><a id="requete12">Checkout Response (12)</a></h2>
+		
+		<p style="font-weight: bold;">This message must be sent by the ACS in response to a Checkout message from the SC.</p>
+		
+		<p style="font-weight: bold;">12 &lt;ok&gt;&lt;renewal 
+ok&gt;&lt;magnetic media&gt;&lt;desensitize&gt;&lt;transaction 
+date&gt;&lt;institution id&gt;&lt;patron identifier&gt;&lt;item 
+identifier&gt;&lt;title identifier&gt;&lt;due date&gt;&lt;fee 
+type&gt;&lt;security inhibit&gt;&lt;currency type&gt;&lt;fee 
+amount&gt;&lt;media type&gt;&lt;item properties&gt;&lt;transaction 
+id&gt;&lt;screen message&gt;&lt;print line&gt;</p>
+		
+		<table style="background-color: #FFFFFF; border-radius: 1em; padding: 0.5em;" width="85%" border="0">
+			<tbody><tr align="left"><th width="5%"></th><th width="10%">Field</th><th width="5%">ID</th><th width="45%">Format</th></tr>
+			<tr><td></td><td>ok</td><td></td><td>1-char, fixed-length required field: 0 or 1.</td></tr>
+			<tr><td></td><td>renewal ok</td><td></td><td>1-char, fixed-length required field: Y or N.</td></tr>
+			<tr><td></td><td>magnetic media</td><td></td><td>1-char, fixed-length required field: Y or N or U.</td></tr>
+			<tr><td></td><td>desensitize</td><td></td><td>1-char, fixed-length required field: Y or N or U.</td></tr>
+			<tr><td></td><td>transaction date</td><td></td><td>18-char, fixed-length required field: YYYYMMDDZZZZHHMMSS.</td></tr>
+			<tr><td></td><td>institution id</td><td>AO</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>patron identifier</td><td>AA</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>item identifier</td><td>AB</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>title identifier</td><td>AJ</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>due date</td><td>AH</td><td>variable-length required field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>fee type</td><td>BT</td><td>2-char, fixed-length optional field (01 thru 99). The type of fee associated with checking out this item.</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>security inhibit</td><td>CI</td><td>1-char, fixed-length optional field: Y or N.</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>currency type</td><td>BH</td><td>3-char fixed-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>fee amounts</td><td>BV</td><td>variable-length optional field. The amount of the fee associated with checking out this item.</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>media type</td><td>CK</td><td>3-char, fixed-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>item properties</td><td>CH</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>transaction id</td><td>BK</td><td>variable-length optional field. May be assigned by the ACS when checking out the item involves a fee.</td></tr>
+			<tr class="optionnel"><td></td><td>screen message</td><td>AF</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td></td><td>print line</td><td>AG</td><td>variable-length optional field</td></tr>
+		</tbody></table>
+		
+		<p>The OK, Renewal OK, Desensitize, Magnetic Media, and Fee Amount fields should be set according to the following rules:</p>
+		
+		<table style="background-color: #FFFFFF; border-radius: 1em; padding: 0.5em;" width="80%" border="0">
+			<tbody><tr><td rowspan="2" width="10%">OK</td><td>should be set to 1 if the ACS checked out the item to the patron.</td></tr>
+			<tr><td>should be set to 0 if the ACS did not check out the item to the patron.</td></tr>
+			<tr><td rowspan="2">Renewal OK</td><td>should be set to Y if the patron requesting to check out the item already has the item checked out</td></tr>
+			<tr><td> should be set to N if the item is not already checked out to the requesting patron.</td></tr>
+			<tr><td rowspan="2" width="10%">Resensitize</td><td>should be set to Y if the SC should desensitize the article.</td></tr>
+			<tr><td> should be set to N if the SC should not desensitize the 
+article (for example, a closed reserve book, or the checkout was 
+refused)</td></tr>
+			<tr><td rowspan="2">Fee Amount</td><td>should be set to the value of the fee associated with checking out the item</td></tr>
+			<tr><td>should be set to 0 if there is no fee associated with checking out the item. </td></tr>
+		</tbody></table>
+		
+		<p style="font-weight: bold;">Exemple de requête 12 renvoyée par le SIGB :</p>
+		
+		<p style="font-weight: bold;">121NNY20140408&nbsp;&nbsp;&nbsp;&nbsp;110507AOSM&nbsp;&nbsp;&nbsp;&nbsp;|AA4|AB0671747|AJBlondie&nbsp;et&nbsp;la&nbsp;mort&nbsp;Texte&nbsp;imprimÃ©&nbsp;:&nbsp;roman|AH29/04/2014|CH|AGRP&nbsp;SMI|</p>
+		
+		<table ;="" width="80%" border="0">
+			<tbody><tr><td width="10%">12</td><td width="50%">type de commande SIP : 12 (Checkout Response)</td></tr>
+			<tr><td>1</td><td>OK : oui (requête effectuée avec succès) (ici, prêt enregistré)</td></tr>
+			<tr><td>N</td><td>renewal ok : N (le doc n'est pas déjâ sur le compte du lecteur, ce n'est donc pas une prolongation)</td></tr>
+			<tr><td>N</td><td>magnetic media : N</td></tr>
+			<tr><td>Y</td><td>désactiver l'antivol : Y</td></tr>
+			<tr><td>20140408&nbsp;&nbsp;&nbsp;&nbsp;110507</td><td>date de la transaction : 8 avril 2014, 11 h 05 m 07 s</td></tr>
+			<tr><td>AOSM&nbsp;&nbsp;&nbsp;&nbsp;|</td><td>localisation de transaction : SM</td></tr>
+			<tr><td>AA4|</td><td>code-barres usager : 4</td></tr>
+			<tr><td>AB0671747|</td><td>code-barres document : 0671747</td></tr>
+			<tr><td>AJBlondie&nbsp;et&nbsp;la&nbsp;mort&nbsp;Texte&nbsp;imprimÃ©&nbsp;:&nbsp;roman|</td><td>titre : Blondie&nbsp;et&nbsp;la&nbsp;mort&nbsp;Texte&nbsp;imprimÃ©&nbsp;:&nbsp;roman|</td></tr>
+			<tr><td>AH29/04/2014|</td><td>date de retour : 29/04/2014</td></tr>
+			<tr><td>CH|</td><td>item properties</td></tr>
+			<tr><td>AGRP&nbsp;SMI|</td><td>print line : RP&nbsp;SMI (ici, c'est la cote)</td></tr>
+		</tbody></table>
+		
+		<p><a href="#sommaire">sommaire</a></p>
+		
+		<!-- Requêtes 17/18 -->
+		
+		<h2><a id="requete17">Item Information (17)</a></h2>
+		
+		<p style="font-weight: bold;">This message may be used to request item information. The ACS should respond with the Item Information Response message.</p>
+		
+		<p style="font-weight: bold;">17&lt;transaction date&gt;&lt;institution id&gt;&lt;item identifier&gt;&lt;terminal password&gt;
+		
+		</p><table style="background-color: #FFFFFF; border-radius: 1em; padding: 0.5em;" width="95%" border="0">
+			<tbody><tr align="left"><th width="5%"></th><th width="10%">Field</th><th width="5%">ID</th><th width="65%">Format</th></tr>
+			<tr><td></td><td>transaction date</td><td></td><td>18-char, fixed-length required field: YYYYMMDDZZZZHHMMSS</td></tr>
+			<tr><td></td><td>institution id</td><td>AO</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>item identifier</td><td>AB</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>terminal password</td><td>AC</td><td>variable-length required field</td></tr>
+		</tbody></table>
+		
+		<p style="font-weight: bold;">Exemple de requête 17 envoyée par l'automate :</p>
+		
+		<p style="font-weight: bold;">1720150409&nbsp;&nbsp;&nbsp;&nbsp;122340AOJL|AB0140730|AC|AY1AZF5F1</p>
+		
+		<table>
+			<tbody><tr><td width="50%">17</td><td width="50%">type de commande SIP : 17 (Item Information)</td></tr>
+			<tr><td>20150409&nbsp;&nbsp;&nbsp;&nbsp;122340</td><td>date de la transaction : 9 avril 2015, 12 h 23 m 40 s</td></tr>
+			<tr><td>AOJL|</td><td>localisation de transaction : JL</td></tr>
+			<tr><td>AB0140730|</td><td>code-barres document : 0140730</td></tr>
+			<tr><td>AC|</td><td>terminal password</td></tr>
+			<tr><td>AY1AZF5F1</td><td><i>non défini dans le format</i></td></tr>
+		</tbody></table>
+		
+		<p><a href="#sommaire">sommaire</a></p>
+		
+		<h2><a id="requete18">Item Information Response (18)</a></h2>
+		
+		<p style="font-weight: bold;">The ACS must send this message in response to the Item Information message.</p>
+		
+		<p style="font-weight: bold;">18&lt;circulation status&gt;&lt;hold 
+queue length&gt;&lt;security marker&gt;&lt;fee type&gt;&lt;transaction 
+date&gt;&lt;due date&gt;&lt;recall date&gt;&lt;hold pickup 
+date&gt;&lt;item identifier&gt;&lt;title 
+identifier&gt;&lt;owner&gt;&lt;currency type&gt;&lt;fee 
+amount&gt;&lt;media type&gt;&lt;permanent location&gt;&lt;current 
+location&gt;&lt;item properties&gt;&lt;screen message&gt;&lt;print 
+line&gt;</p>
+		
+		<table style="background-color: #FFFFFF; border-radius: 1em; padding: 0.5em;" width="95%" border="0">
+			<tbody><tr align="left"><th width="5%"></th><th width="10%">Field</th><th width="5%">ID</th><th width="65%">Format</th></tr>
+			<tr class="optionnel"><td>2.00</td><td>circulation status</td><td></td><td>2-char, fixed-length required field (00 thru 99)</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>security marker</td><td></td><td>2-char, fixed-length required field (00 thru 99)</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>fee type</td><td></td><td>2-char, fixed-length required field (00 thru 99). The type of fee associated with checking out this item.</td></tr>
+			<tr><td></td><td>transaction date</td><td></td><td>18-char, fixed-length required field: YYYYMMDDZZZZHHMMSS</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>hold queue length</td><td>CF</td><td>variable-length optional field</td></tr>
+			<tr><td></td><td>due date</td><td>AH</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>recall date</td><td>CJ</td><td>18-char, fixed-length optional field:  YYYYMMDDZZZZHHMMSS </td></tr>
+			<tr class="optionnel"><td>2.00</td><td>hold pickup date</td><td>CM</td><td>18-char, fixed-length optional field:  YYYYMMDDZZZZHHMMSS </td></tr>
+			<tr><td></td><td>item identifier</td><td>AB</td><td>variable-length optional field</td></tr>
+			<tr><td></td><td>title identifier</td><td>AJ</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>owner</td><td>BG</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>currency type</td><td>BH</td><td>3 char, fixed-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>fee amount</td><td>BV</td><td>variable-length optional field.  The amount of the fee associated with this item.</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>media type</td><td>CK</td><td>3 char, fixed-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>permanent location</td><td>AQ</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>current location</td><td>AP</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>item properties</td><td>CH</td><td>variable-length optional field</td></tr>
+			<tr><td></td><td>screen message</td><td>AF</td><td>variable-length optional field</td></tr>
+			<tr><td></td><td>print line</td><td>AG</td><td>variable-length optional field</td></tr>
+		</tbody></table>
+		
+		<p style="font-weight: bold;">Exemple de requête 18 renvoyée par le SIGB :</p>
+		
+		<p style="font-weight: bold;">1801010120150409&nbsp;&nbsp;&nbsp;&nbsp;122338CF00000|AB0140730|AJFondation en pÃ©ril / Gregory Benford ; t|BGSF BEN|</p>
+		
+		<table>
+			<tbody><tr><td width="50%">18</td><td width="50%">type de commande SIP : 18 (Item Information Response)</td></tr>
+			<tr><td width="50%">01</td><td width="50%">circulation status : 01 (other) <i>(NB : Portfolio met toujours 01 dans ce champ)</i></td></tr>
+			<tr><td width="50%">01</td><td width="50%">security marker : 01 (none) <i>(NB : Portfolio met toujours 01 dans ce champ)</i></td></tr>
+			<tr><td width="50%">01</td><td width="50%">fee type : 01 (other/unknown) <i>(NB : Portfolio met toujours 01 dans ce champ)</i></td></tr>
+			<tr><td>20150409&nbsp;&nbsp;&nbsp;&nbsp;122338</td><td>date de la transaction : 9 avril 2015, 12 h 23 m 38 s</td></tr>
+			<tr><td>CF00000</td><td>hold queue length (= nb d'usagers ayant réservé l'exemplaire) : 0</td></tr>
+			<tr><td>AB0140730</td><td>code-barres document : 0140730</td></tr>
+			<tr><td>AJFondation en pÃ©ril / Gregory Benford ; t</td><td>title identifier (titre) : Fondation en pÃ©ril / Gregory Benford ; t</td></tr>
+			<tr><td>BGSF BEN</td><td>owner (mais ici, cote) : SF BEN</td></tr>
+		</tbody></table>
+		
+		<p><a href="#sommaire">sommaire</a></p>
+		
+		
+		
+		<h2><a id="requete63">Patron Information (63)</a></h2>
+		
+		<p style="font-weight: bold;">This message is a superset of the Patron
+ Status Request message. It should be used to request patron 
+information. The ACS should respond with the Patron Information Response
+ message. </p>
+		
+		<p style="font-weight: bold;">63 &lt;language&gt;&lt;transaction date&gt;&lt;summary&gt;&lt;institution id&gt;&lt;patron identifier&gt;&lt;terminal
+password&gt;&lt;patron password&gt;&lt;start item&gt;&lt;end item&gt;</p>
+
+		<table style="background-color: #FFFFFF; border-radius: 1em; padding: 0.5em;" width="60%" border="0">
+			<tbody><tr align="left"><th width="5%"></th><th width="10%">Field</th><th width="5%">ID</th><th width="40%">Format</th></tr>
+			<tr><td></td><td>language</td><td></td><td>3-char, fixed-length required field.</td></tr>
+			<tr><td></td><td>transaction date</td><td></td><td>18-char, fixed-length required field: YYYYMMDDZZZZHHMMSS </td></tr>
+			<tr><td>2.00</td><td>summary</td><td></td><td>10-char, fixed-length required field.</td></tr>
+			<tr><td></td><td>institution id</td><td>AO</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>patron identifier</td><td>AA</td><td>variable-length required field</td></tr>
+			<tr class="optionnel"><td></td><td>terminal password</td><td>AC</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td></td><td>patron password</td><td>AD</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>start item</td><td>BP</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>end item</td><td>BQ</td><td>variable-length optional field</td></tr>
+		</tbody></table>
+		
+		<p style="font-weight: bold;">Exemple de requête 63 de l'automate :</p>
+		
+		<p style="font-weight: bold;">6300220140408&nbsp;&nbsp;&nbsp;&nbsp;110848&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AOSM|AA4|AC|AY8AZF531</p>
+		
+		<table>
+			<tbody><tr><td width="10%">63</td><td width="50%">type de commande SIP : 63 (Patron Information)</td></tr>
+			<tr><td>002</td><td>langue : français (000 = Unknown (default), 001 = English, 002 = French, 003 = German, 004 = Italian, 005 = Dutch…)</td></tr>
+			<tr><td>20140408&nbsp;&nbsp;&nbsp;&nbsp;110848</td><td>date de la transaction : 8 avril 2014, 11 h 08 m 48 s</td></tr>
+			<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>summary</td></tr>
+			<tr><td>AOSM|</td><td>localisation de transaction : SM</td></tr>
+			<tr><td>AA4|</td><td>code-barres usager : 4</td></tr>
+			<tr><td>AC|</td><td>terminal password</td></tr>
+			<tr><td>AY8AZF531</td><td>sequence number = 8AZF531 (used only when error detection is enabled)</td></tr>
+		</tbody></table>
+		
+		<p><a href="#sommaire">sommaire</a></p>
+		
+		<h2><a id="requete64">Patron Information Response (64)</a></h2>
+		
+		<p style="font-weight: bold;">The ACS must send this message in response to the Patron Information message.</p>
+		
+		<p style="font-weight: bold;">64 &lt;patron 
+status&gt;&lt;language&gt;&lt;transaction date&gt;&lt;hold items 
+count&gt;&lt;overdue items count&gt;&lt;charged items count&gt;&lt;fine 
+items count&gt;&lt;recall items count&gt;&lt;unavailable holds 
+count&gt;&lt;institution id&gt;&lt;patron identifier&gt;&lt;personal 
+name&gt;&lt;hold items limit&gt;&lt;overdue items limit&gt;&lt;charged 
+items limit&gt;&lt;valid patron&gt;&lt;valid patron 
+password&gt;&lt;currency type&gt;&lt;fee amount&gt;&lt;fee 
+limit&gt;&lt;items&gt;&lt;home address&gt;&lt;e-mail address&gt;&lt;home
+ phone number&gt;&lt;screen message&gt;&lt;print line&gt; </p>
+
+		<table style="background-color: #FFFFFF; border-radius: 1em; padding: 0.5em;" width="80%" border="0">
+			<tbody><tr align="left"><th width="5%"></th><th width="20%">Field</th><th width="5%">ID</th><th width="40%">Format</th></tr>
+			<tr><td></td><td>patron status</td><td></td><td>14-char, fixed-length required field.</td></tr>
+			<tr><td></td><td>language</td><td></td><td>3-char, fixed-length required field.</td></tr>
+			<tr><td></td><td>transaction date</td><td></td><td>18-char, fixed-length required field: YYYYMMDDZZZZHHMMSS</td></tr>
+			<tr><td>2.00</td><td>hold items count</td><td></td><td>4-char, fixed-length required field</td></tr>
+			<tr><td>2.00</td><td>overdue items count</td><td></td><td>4-char, fixed-length required field</td></tr>
+			<tr><td>2.00</td><td>charged items count</td><td></td><td>4-char, fixed-length required field</td></tr>
+			<tr><td>2.00</td><td>fine items count</td><td></td><td>4-char, fixed-length required field</td></tr>
+			<tr><td>2.00</td><td>recall items count</td><td></td><td>4-char, fixed-length required field</td></tr>
+			<tr><td>2.00</td><td>unavailable holds count</td><td></td><td>4-char, fixed-length required field</td></tr>
+			<tr><td></td><td>institution id</td><td>AO</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>patron identifier</td><td>AA</td><td>variable-length required field</td></tr>
+			<tr><td></td><td>personal name</td><td>AE</td><td>variable-length required field</td></tr>
+			<tr><td>2.00</td><td>hold items limit</td><td>BZ</td><td>4-char, fixed-length required field</td></tr>
+			<tr><td>2.00</td><td>overdue items limit</td><td>CA</td><td>4-char, fixed-length required field</td></tr>
+			<tr><td>2.00</td><td>charged items limit</td><td>CB</td><td>4-char, fixed-length required field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>valid patron</td><td>BL</td><td>1-char, optional field: Y or N</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>valid patron password</td><td>CQ</td><td>1-char, optional field: Y or N</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>currency type</td><td>BH</td><td>3-char fixed-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>fee amount</td><td>BV</td><td>variable-length optional field. The amount of fees owed by this patron.</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>fee limit</td><td>CC</td><td>variable-length optional field. The fee limit amount.</td></tr>
+			<tr><td colspan="4">&nbsp;</td></tr>
+			<tr class="optionnel"><td colspan="4">item: zero or more instances of one of the following, based on “summary” field of the Patron Information message:</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>hold items</td><td>AS</td><td>variable-length optional field (this field should be sent for each hold item).</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>overdue item</td><td>AT</td><td>ariable-length optional field (this field should be sent for each overdue item).</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>charged items</td><td>AU</td><td>variable-length optional field (this field should be sent for each charged item). </td></tr>
+			<tr class="optionnel"><td>2.00</td><td>fine items</td><td>AV</td><td>variable-length optional field (this field should be sent for each fine item).</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>recall items</td><td>BU</td><td>variable-length optional field (this field should be sent for each recall item).</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>unavailable hold items</td><td>CD</td><td>variable-length optional field (this field should be sent for each unavailable hold item).</td></tr>
+			<tr><td colspan="4">&nbsp;</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>home address</td><td>BD</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>e-mail address</td><td>BE</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td>2.00</td><td>home phone number</td><td>BF</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td></td><td>screen message</td><td>AF</td><td>variable-length optional field</td></tr>
+			<tr class="optionnel"><td></td><td>print line</td><td>AG</td><td>variable-length optional field</td></tr>
+		</tbody></table>
+		
+		<p style="font-weight: bold;">Exemple de requête 64 de l'automate :</p>
+		
+		<p style="font-weight: bold;">64&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;00220140408&nbsp;&nbsp;&nbsp;&nbsp;110848000000000032000000000000AOSM&nbsp;&nbsp;&nbsp;&nbsp;|AA4|AE************************************|BZ5|CA10|CB17|BLY|CQN|BHEUR|BV0.0|CC0.0|BD*********|BE********************|BF|DG|DH|DI|DJ|DK|DL|PD01/01/1970|PCMÃ©diathÃ¨que&nbsp;Lillois&nbsp;&gt;12&nbsp;ans|</p>
+		
+		<table>
+			<tbody><tr><td width="5%">64</td><td width="50%">type de commande SIP : 64 (Patron Information Response)</td></tr>
+			<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>patron status : aucun blocage</td></tr>
+			<tr><td>002</td><td>langue : français (000 = Unknown (default), 001 = English, 002 = French, 003 = German, 004 = Italian, 005 = Dutch…)</td></tr>
+			<tr><td>20140408&nbsp;&nbsp;&nbsp;&nbsp;110848</td><td>date de la transaction : 8 avril 2014, 11 h 08 m 48 s</td></tr>
+			<tr><td>000000000032000000000000</td><td>hold items count : 0000, 
+overdue items count : 0000, charged items count : 0032, fine items count
+ : 0000, recall items count : 0000, unavailable holds count : 0000</td></tr>
+			<tr><td>AOSM&nbsp;&nbsp;&nbsp;&nbsp;|</td><td>localisation de transaction : SM</td></tr>
+			<tr><td>AA4|</td><td>code-barres usager : 4</td></tr>
+			<tr><td>AE************************************|</td><td>nom usager</td></tr>
+			<tr><td>BZ5|</td><td>maximum de réservations : 5</td></tr>
+			<tr><td>CA10|</td><td>maximum de retards : 10</td></tr>
+			<tr><td>CB17|</td><td>maximum de prêts : 17</td></tr>
+			<tr><td>BLY|</td><td>valid patron : Y</td></tr>
+			<tr><td>CQN|</td><td>valid patron password : N</td></tr>
+			<tr><td>BHEUR|</td><td>devise : euros</td></tr>
+			<tr><td>BV0.0|</td><td>amendes : 0</td></tr>
+			<tr><td>CC0.0|</td><td>maximum d'amendes : 0</td></tr>
+			<tr><td>BD*********|</td><td>adresse usager</td></tr>
+			<tr><td>BE********************|</td><td>email usager</td></tr>
+			<tr><td>BF|</td><td>téléphone usager</td></tr>
+			<tr><td>DG|</td><td>?</td></tr>
+			<tr><td>DH|</td><td>?</td></tr>
+			<tr><td>DI|</td><td>?</td></tr>
+			<tr><td>DJ|</td><td>?</td></tr>
+			<tr><td>DK|</td><td>?</td></tr>
+			<tr><td>PD01/01/1970|</td><td>?</td></tr>
+			<tr><td>PCMÃ©diathÃ¨que&nbsp;Lillois&nbsp;&gt;12&nbsp;ans|</td><td>?</td></tr>
+		</tbody></table>
+		
+		<p style="font-weight: bold;">Exemple de requête 64 de la trieuse :</p>
+		
+		<p style="font-weight: bold;">64Y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;00020140520&nbsp;&nbsp;&nbsp;&nbsp;175952000000030003000000000000AOSM&nbsp;&nbsp;&nbsp;&nbsp;|AAE207025|AEVERSCHELDE,&nbsp;Jeanne&nbsp;-&nbsp;Fin&nbsp;abt:&nbsp;27/04/2014.&nbsp;|BZ5|CA10|CB14|BLY|CQN|BHEUR|BV0.0|CC0.0|BD6&nbsp;Rue&nbsp;du&nbsp;chemin&nbsp;de&nbsp;fer,&nbsp;LILLE,&nbsp;LILLE|BElversche@club-internet.fr|BF06&nbsp;74&nbsp;90&nbsp;39&nbsp;94|DG|DH|DI|DJ|DK|DL|AFVotre&nbsp;abonnement&nbsp;a&nbsp;expirÃ©&nbsp;le&nbsp;27/04/2014.&nbsp;Adressez-vous&nbsp;Ã&nbsp;&nbsp;laccueil.&nbsp;Vous&nbsp;avez&nbsp;des&nbsp;documents&nbsp;en&nbsp;retard.&nbsp;|PD12/20/2000|PCFRAN|</p>
+		
+		
+		<p><a href="#sommaire">sommaire</a></p>
+		
+		<h2><a id="codes">Codes de champs</a></h2>
+		
+		<table style="background-color: #FFFFFF; border-radius: 1em; padding: 0.5em;" width="25%" border="0">
+			<tbody><tr align="left"><th width="5%">Code</th><th width="10%">Libellé</th></tr>
+			<tr><td>AA</td><td>patron identifier</td></tr>
+			<tr><td>AB</td><td>item identifier</td></tr>
+			<tr><td>AC</td><td>terminal password</td></tr>
+			<tr><td>AD</td><td>patron password</td></tr>
+			<tr><td>AE</td><td>personal name</td></tr>
+			<tr><td>AF</td><td>screen message</td></tr>
+			<tr><td>AG</td><td>print line</td></tr>
+			<tr><td>AH</td><td>due date</td></tr>
+			<tr><td>AJ</td><td>title identifier</td></tr>
+			<tr><td>AL</td><td>blocked card msg</td></tr>
+			<tr><td>AM</td><td>library name</td></tr>
+			<tr><td>AN</td><td>terminal location</td></tr>
+			<tr><td>AO</td><td>institution id</td></tr>
+			<tr><td>AP</td><td>current location</td></tr>
+			<tr><td>AQ</td><td>permanent location</td></tr>
+			<tr><td>AS (2.00)</td><td>hold items</td></tr>
+			<tr><td>AT (2.00)</td><td>overdue items</td></tr>
+			<tr><td>AU (2.00)</td><td>charged items</td></tr>
+			<tr><td>AV (2.00)</td><td>fine items</td></tr>
+			<tr><td>AY</td><td>sequence number</td></tr>
+			<tr><td>AZ</td><td>checksum</td></tr>
+			<tr><td>BD (2.00)</td><td>home address</td></tr>
+			<tr><td>BE (2.00)</td><td>e-mail address</td></tr>
+			<tr><td>BF (2.00)</td><td>home phone number</td></tr>
+			<tr><td>BG (2.00)</td><td>owner</td></tr>
+			<tr><td>BH (2.00)</td><td>currency type</td></tr>
+			<tr><td>BI (2.00)</td><td>cancel</td></tr>
+			<tr><td>BK (2.00)</td><td>transaction id</td></tr>
+			<tr><td>BL (2.00)</td><td>valid patron</td></tr>
+			<tr><td>BM (2.00)</td><td>renewed items</td></tr>
+			<tr><td>BN (2.00)</td><td>unrenewed items</td></tr>
+			<tr><td>BO (2.00)</td><td>fee acknowledged</td></tr>
+			<tr><td>BP (2.00)</td><td>start item</td></tr>
+			<tr><td>BQ (2.00)</td><td>end item</td></tr>
+			<tr><td>BR (2.00)</td><td>queue position</td></tr>
+			<tr><td>BS (2.00)</td><td>pickup location</td></tr>
+			<tr><td>BT (2.00)</td><td>fee type</td></tr>
+			<tr><td>BU (2.00)</td><td>recall items</td></tr>
+			<tr><td>BV (2.00)</td><td>fee amount</td></tr>
+			<tr><td>BW (2.00)</td><td>expiration date</td></tr>
+			<tr><td>BX (2.00)</td><td>supported messages</td></tr>
+			<tr><td>BY (2.00)</td><td>hold type</td></tr>
+			<tr><td>BZ (2.00)</td><td>hold items limit</td></tr>
+			<tr><td>CA (2.00)</td><td>overdue items limit</td></tr>
+			<tr><td>CB (2.00)</td><td>charged items limit</td></tr>
+			<tr><td>CC (2.00)</td><td>fee limit</td></tr>
+			<tr><td>CD (2.00)</td><td>unavailable hold items</td></tr>
+			<tr><td>CF (2.00)</td><td>hold queue length</td></tr>
+			<tr><td>CG (2.00)</td><td>fee identifier</td></tr>
+			<tr><td>CH (2.00)</td><td>item properties</td></tr>
+			<tr><td>CI (2.00)</td><td>security inhibit</td></tr>
+			<tr><td>CJ (2.00)</td><td>recall date</td></tr>
+			<tr><td>CK (2.00)</td><td>media type</td></tr>
+			<tr><td>CL (2.00)</td><td>sort bin</td></tr>
+			<tr><td>CM (2.00)</td><td>hold pickup date</td></tr>
+			<tr><td>CN (2.00)</td><td>login user id </td></tr>
+			<tr><td>CO (2.00)</td><td>login password</td></tr>
+			<tr><td>CP (2.00)</td><td>location code</td></tr>
+			<tr><td>CQ (2.00)</td><td>valid patron password</td></tr>
+		</tbody></table>
+		
+		<p><a href="#sommaire">sommaire</a></p>
+	 
+	
+</body></html>

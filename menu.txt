@@ -1,0 +1,8 @@
+<ul id="menu_horizontal">
+	<li><a href="index.php" title="Accueil"><i class="fa fa-home fa-2x" aria-hidden="true"></i></a></li>
+	<li><a href="info_usager.php" title="Info usager"><i class="fa fa-user fa-2x" aria-hidden="true"></i><i class="fa fa-question fa-2x" aria-hidden="true"></i></a></li>
+	<li><a href="info_document.php" title="Info document"><i class="fa fa-book fa-2x" aria-hidden="true"></i><i class="fa fa-question fa-2x" aria-hidden="true"></i></a></li>
+	<li><a href="pret.php" title="Prêt"><i class="fa fa-upload fa-2x" aria-hidden="true"></i></a></li>
+	<li><a href="prolongation.php" title="Prolongation"><i class="fa fa-upload fa-2x" aria-hidden="true"></i><i class="fa fa-plus fa-2x" aria-hidden="true"></i></a></li>
+	<li><a href="retour.php" title = "Retour"><i class="fa fa-download fa-2x" aria-hidden="true"></i></a></li>
+</ul>

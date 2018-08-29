@@ -1,0 +1,3 @@
+<footer>
+	Utilise la classe PHP <a href="https://cap60552.github.io/php-sip2/">php-sip2</a> de John Wohlers, sous licence GPL.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <a href="protocole_SIP2.html" target="_blank">Protocole SIP</a>
+</footer>
